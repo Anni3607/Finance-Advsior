@@ -1,4 +1,5 @@
-os.system("pip install joblib")  # Add this at the top of app.py
+import os
+os.system("pip install joblib")
 import joblib
 import streamlit as st
 import pandas as pd
