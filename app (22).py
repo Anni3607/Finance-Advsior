@@ -1,10 +1,10 @@
-
+os.system("pip install joblib")  # Add this at the top of app.py
+import joblib
 import streamlit as st
 import pandas as pd
 import joblib
 import os
-os.system("pip install joblib")  # Add this at the top of app.py
-import joblib
+
 
 # Load trained model
 model = joblib.load('finance_advisor_model.pkl')
