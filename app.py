@@ -1,19 +1,22 @@
-import os
-os.system("pip install joblib")
 import joblib
 import streamlit as st
 import pandas as pd
-import joblib
-import os
+import os # Keep os import if you plan to use other os functionalities, otherwise it can be removed if not used elsewhere.
 
 
 # Load trained model
-model = joblib.load('finance_advisor_model.pkl')
+# IMPORTANT: Ensure 'finance_advisor_model.pkl' is in the same directory as app.py
+# in your GitHub repository for Streamlit Cloud to find it.
+try:
+    model = joblib.load('finance_advisor_model.pkl')
+except FileNotFoundError:
+    st.error("Error: Model file 'finance_advisor_model.pkl' not found. Please ensure it's in the same directory as app.py.")
+    st.stop() # Stop the app if the model cannot be loaded
 
 # Page Config
 st.set_page_config(
     page_title="WealthyWays 💸 | Powered by Anni",
-    page_icon="💰",
+    page_icon="�",
     layout="centered"
 )
 
@@ -48,6 +51,10 @@ st.markdown("""
         border-radius: 8px;
         padding: 0.6em 1.2em;
         font-weight: bold;
+        cursor: pointer; /* Add pointer cursor for better UX */
+    }
+    .stButton>button:hover {
+        background-color: #107e37; /* Darker shade on hover */
     }
     </style>
 """, unsafe_allow_html=True)
@@ -66,7 +73,10 @@ debt = st.number_input("💳 Current Debt (₹)", min_value=0, help="Include EMI
 
 # Predict & Show Advice
 if st.button("💡 Ask Anni for Advice"):
+    # Create a DataFrame for prediction
     input_df = pd.DataFrame([[income, expenses, savings, debt]], columns=['income', 'expenses', 'savings', 'debt'])
+    
+    # Make prediction using the loaded model
     prediction = model.predict(input_df)[0]
 
     st.markdown("---")
@@ -82,8 +92,10 @@ if st.button("💡 Ask Anni for Advice"):
         st.error("🚨 You're in a red zone. Reduce unnecessary spending and build at least 3 months of emergency savings.")
 
     # Saving Score Breakdown
-    score = ((savings - debt) / (income + 1)) * 100
+    # Add 1 to income to prevent division by zero if income is 0
+    score = ((savings - debt) / (income + 1)) * 100 
     st.markdown("### 📊 Your Saving Score")
+    # Ensure progress bar value is between 0 and 1
     st.progress(min(max(score / 100, 0), 1))
 
     if score > 25:
@@ -102,3 +114,4 @@ if st.button("💡 Ask Anni for Advice"):
 st.markdown("---")
 st.markdown("Built with 💚 by **WealthyWays** | Your personal finance copilot 🚀")
 st.markdown("Bot Advisor: **Anni** 🧠")
+�
